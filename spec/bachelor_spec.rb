@@ -17,7 +17,7 @@ describe "bachelor" do
   end
 
   describe "#get_contestant_name" do
-    it "returns 'Carly Waddel' when passed data and the string 'Cruise Ship Singer'" do
+    it "returns 'Carly Waddell' when passed data and the string 'Cruise Ship Singer'" do
       expect(get_contestant_name(data, "Cruise Ship Singer")).to eq("Carly Waddell")
     end
 
