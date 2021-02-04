@@ -1,32 +1,28 @@
 require 'pry'
-def find_season_winner(data, season) # helper function for get_first_name_of_season_winner
-  data[season].find do | contestant_hash |
-    contestant_hash["status"] == "Winner"
-  end
+require 'json'
+bachelor_file = File.read('spec/fixtures/contestants.json')
+bachelor_hash = JSON.parse(bachelor_file)
+
+def all_contestants(data)
+  data.values.flatten
 end
 
 def get_first_name_of_season_winner(data, season)
   # code here
-  find_season_winner(data, season)["name"].split(" ")[0]
-end
-
-def all_contestants(data) # remember to refactor this later -- ask someone how
-  list_of_contestants = []
-  data.each do | season, contestant_array |
-    contestant_array.each do | contestant_hash |
-      list_of_contestants.push(contestant_hash)
+  (
+    data[season].find do | contestant_hash |
+      contestant_hash["status"] = "Winner"
     end
-  end
-  list_of_contestants
+  )["name"].split(" ")[0]
 end
 
-def get_contestant_name(data, occupation) # what if more than one contestant shares the same occupation?
+def get_contestant_name(data, occupation) 
   # code here
   (
     all_contestants(data).find do | contestant_hash |
       contestant_hash["occupation"] == occupation
     end
-  )["name"] # this syntax is so ugly!!!
+  )["name"]  
 end
 
 def count_contestants_by_hometown(data, hometown)
@@ -38,18 +34,16 @@ def count_contestants_by_hometown(data, hometown)
   ).length
 end
 
-def find_first_from_hometown(data, hometown) # helper function for get_occupation
-  all_contestants(data).find do | contestant_hash |
-    contestant_hash["hometown"] == hometown
-  end
-end
-
 def get_occupation(data, hometown)
   # code here
-  find_first_from_hometown(data, hometown)["occupation"]
+  (
+    all_contestants(data).find do | contestant_hash |
+      contestant_hash["hometown"] == hometown
+    end
+  )["occupation"]  
 end
 
-def get_average_age_for_season(data, season)
+def get_average_age_for_season_o(data, season)
   # code here
   counter = 0.0
   (
@@ -61,3 +55,14 @@ def get_average_age_for_season(data, season)
     ) / counter
   ).round
 end
+
+def get_average_age_for_season(data, season) 
+  (
+    (
+      data[season].map do | contestant_hash | # data[season] is an array of hashes
+        contestant_hash["age"].to_f           # map returns array w/ same # of elements
+      end
+    ).sum / data[season].length
+  ).round
+end
+
